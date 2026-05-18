@@ -24,9 +24,9 @@
                 <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-center text-lg font-bold tracking-widest focus:outline-none focus:border-indigo-500">
                 <p id="login-error" class="text-xs text-red-500 font-semibold mt-1 hidden"></p>
             </div>
-            <button id="btn-login-trigger" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md cursor-pointer">Entrar a mi Panel</button>
+            <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md cursor-pointer">Entrar a mi Panel</button>
             <div class="pt-4 border-t border-slate-100">
-                <button id="btn-monitor-trigger" class="text-xs text-indigo-500 hover:underline font-medium">📺 Modo Monitor (Smart TV)</button>
+                <button onclick="initSession('tv-monitor')" class="text-xs text-indigo-500 hover:underline font-medium">📺 Modo Monitor (Smart TV)</button>
             </div>
         </div>
     </div>
@@ -132,24 +132,15 @@
         const SUPABASE_ANON_KEY = "CrpoZxVBBS6XBq4eS3cAcB4SPK3fuiE7jMzy5zbxJoOHH00ZE8OttcIesYMANOjp0Rt8H96V8PnRYs6UuZILeQ==";
         // ===================================================================
 
-        let supabase = null;
+        let supabaseCloud = null;
         let allOrders = [];
         let currentRole = null;
 
-        // Función segura para levantar Supabase sin romper la interfaz
-        function asegurarSupabase() {
-            if (!supabase && window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-            return supabase;
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            asegurarSupabase();
-            
-            // Atamos los clicks directamente por ID para que respondan SÍ O SÍ
-            document.getElementById('btn-login-trigger').addEventListener('click', login);
-            document.getElementById('btn-monitor-trigger').addEventListener('click', () => initSession('tv-monitor'));
+            // Inicialización limpia
+            if (window.supabase) {
+                supabaseCloud = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
             
             document.getElementById('login-pass').addEventListener('keydown', (e) => {
                 if(e.key === 'Enter') login();
@@ -171,6 +162,7 @@
             else if (pass === 'Sanfunpro') { localStorage.setItem('santi_sa_session', 'santi'); initSession('santi'); }
             else { errorEl.innerText = "❌ Contraseña incorrecta."; errorEl.classList.remove('hidden'); }
         }
+        window.login = login;
 
         function logout() {
             localStorage.removeItem('santi_sa_session');
@@ -179,6 +171,7 @@
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('app-container').classList.add('hidden');
         }
+        window.logout = logout;
 
         function initSession(role) {
             currentRole = role;
@@ -210,11 +203,13 @@
             }
             fetchOrders();
         }
+        window.initSession = initSession;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
         }
+        window.switchTab = switchTab;
 
         function updateTotal() {
             let total = 0;
@@ -223,11 +218,11 @@
             if (document.getElementById('srv-mobile').checked) total += 2500;
             document.getElementById('live-total').innerText = `$${total.toLocaleString('es-AR')}`;
         }
+        window.updateTotal = updateTotal;
 
         async function fetchOrders() {
-            const db = asegurarSupabase();
-            if (!db) return;
-            const { data, error } = await db.from('pedidos').select('*');
+            if (!supabaseCloud) return;
+            const { data, error } = await supabaseCloud.from('pedidos').select('*');
             
             if (error) {
                 console.error("Error bajando datos de Supabase:", error);
@@ -236,11 +231,11 @@
                 renderOrders();
             }
         }
+        window.fetchOrders = fetchOrders;
 
         async function submitOrder(e) {
             e.preventDefault();
-            const db = asegurarSupabase();
-            if(!db) { showToast("Error: Base de datos desconectada.", "error"); return; }
+            if(!supabaseCloud) { showToast("Error de conexión", "error"); return; }
 
             let tareas = [];
             if (document.getElementById('srv-sweep').checked) tareas.push("Barrer Casa");
@@ -252,7 +247,7 @@
 
             document.getElementById('submit-btn').disabled = true;
 
-            const { error } = await db.from('pedidos').insert([{
+            const { error } = await supabaseCloud.from('pedidos').insert([{
                 id: "ID-" + Date.now(),
                 client_name: document.getElementById('client-name').value,
                 date_pref: document.getElementById('pref-date').value || "Lo antes posible",
@@ -272,11 +267,11 @@
             }
             document.getElementById('submit-btn').disabled = false;
         }
+        window.submitOrder = submitOrder;
 
         async function updateStatus(id, nuevoEstado) {
-            const db = asegurarSupabase();
-            if(!db) return;
-            const { error } = await db.from('pedidos').update({ status: nuevoEstado }).eq('id', id);
+            if(!supabaseCloud) return;
+            const { error } = await supabaseCloud.from('pedidos').update({ status: nuevoEstado }).eq('id', id);
 
             if (!error) {
                 showToast(`Orden actualizada a: ${nuevoEstado}`);
@@ -285,12 +280,12 @@
                 showToast("Error al guardar estado", "error");
             }
         }
+        window.updateStatus = updateStatus;
 
         async function deleteOrder(id) {
-            const db = asegurarSupabase();
-            if(!db) return;
+            if(!supabaseCloud) return;
             if (!confirm("¿Querés eliminar esta solicitud permanentemente?")) return;
-            const { error } = await db.from('pedidos').delete().eq('id', id);
+            const { error } = await supabaseCloud.from('pedidos').delete().eq('id', id);
 
             if (!error) {
                 showToast("Registro removido.");
@@ -299,12 +294,12 @@
                 showToast("Error al eliminar", "error");
             }
         }
+        window.deleteOrder = deleteOrder;
 
         async function clearCompletedHistory() {
-            const db = asegurarSupabase();
-            if(!db) return;
+            if(!supabaseCloud) return;
             if (!confirm("¿Eliminar todas las órdenes completadas?")) return;
-            const { error } = await db.from('pedidos').delete().eq('status', 'Completado');
+            const { error } = await supabaseCloud.from('pedidos').delete().eq('status', 'Completado');
 
             if (!error) {
                 showToast("Historial de completados limpiado.");
@@ -313,6 +308,7 @@
                 showToast("Error al limpiar historial", "error");
             }
         }
+        window.clearCompletedHistory = clearCompletedHistory;
 
         function searchOrderStatus() {
             const name = document.getElementById('search-order-name').value.trim().toLowerCase();
@@ -342,6 +338,7 @@
             box.innerHTML = html;
             box.classList.remove('hidden');
         }
+        window.searchOrderStatus = searchOrderStatus;
 
         function renderOrders() {
             const container = document.getElementById('admin-orders-container');
@@ -383,16 +380,6 @@
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
         }
-
-        // Hacemos globales los métodos necesarios para los botones HTML onclick
-        window.switchTab = switchTab;
-        window.updateTotal = updateTotal;
-        window.searchOrderStatus = searchOrderStatus;
-        window.logout = logout;
-        window.updateStatus = updateStatus;
-        window.deleteOrder = deleteOrder;
-        window.clearCompletedHistory = clearCompletedHistory;
-        window.fetchOrders = fetchOrders;
     </script>
 </body>
 </html>
