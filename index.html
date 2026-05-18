@@ -1,4 +1,3 @@
-index.html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -29,6 +28,9 @@ index.html
             <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-all-300 shadow-md cursor-pointer">
                 Entrar a mi Panel
             </button>
+            <div class="pt-4 border-t border-slate-100">
+                <button onclick="initSession('tv-monitor')" class="text-xs text-indigo-500 hover:underline font-medium">📺 Modo Monitor (Para Chromecast / Smart TV)</button>
+            </div>
         </div>
     </div>
 
@@ -121,7 +123,7 @@ index.html
                                     <p class="text-xs text-slate-500">Limpieza de duplicados de WhatsApp, archivos basura y organización del sistema.</p>
                                     <div class="flex items-center gap-2 mt-2">
                                         <span class="text-xs text-slate-400">Cantidad:</span>
-                                        <input type="number" id="qty-mobile" min="1" max="5" value="1" class="w-12 text-center text-xs border border-slate-200 rounded p-0.5 focus:outline-none" onchange="updateTotal()" oninput="updateTotal()">
+                                        <input type="number" id="qty-mobile" min="1" max="5" value="1" class="w-12 text-center text-xs border border-slate-200 rounded p-0.5 focus:outline-none" onchange="updateTotal()">
                                     </div>
                                 </div>
                             </div>
@@ -145,28 +147,6 @@ index.html
                                     <p class="text-xs text-slate-500">Limpieza y clasificación de estantes, y descarte de productos vencidos.</p>
                                 </div>
                             </div>
-
-                            <hr class="border-slate-100">
-
-                            <div class="bg-indigo-50/50 rounded-xl p-4 space-y-3 border border-indigo-100/50">
-                                <div class="flex items-start gap-3">
-                                    <input type="checkbox" id="srv-custom" class="mt-1 h-5 w-5 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500 cursor-pointer" onchange="updateTotal()">
-                                    <div class="flex-grow">
-                                        <label for="srv-custom" class="font-bold text-indigo-900 cursor-pointer">➕ Encargar un trabajo personalizado</label>
-                                        <p class="text-xs text-indigo-700/80">Cualquier otra cosa que necesites que resuelva en casa.</p>
-                                    </div>
-                                </div>
-                                <div id="custom-details" class="hidden pl-8 space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-xs font-bold text-indigo-600 uppercase">¿Qué querés que haga?</label>
-                                        <input type="text" id="custom-desc" placeholder="Ej: Lavar el auto, pasear el perro..." class="w-full bg-white border border-indigo-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-xs font-bold text-indigo-600 uppercase">Precio Acordado ($ ARS)</label>
-                                        <input type="number" id="custom-price" min="0" placeholder="Ej: 2000" class="w-full sm:w-32 bg-white border border-indigo-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none" onchange="updateTotal()" oninput="updateTotal()">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -174,28 +154,10 @@ index.html
                         <div class="bg-white rounded-2xl shadow-lg border border-indigo-100 p-6 sticky top-6 space-y-4 text-center">
                             <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Monto total estimado</span>
                             <div id="live-total" class="text-4xl font-black text-indigo-600">$0</div>
-                            
-                            <p class="text-[11px] text-slate-400 leading-tight pt-2 border-t border-slate-100">
-                                Las solicitudes se envían de forma automática a la base de datos de Santi S.A. en tiempo real.
-                            </p>
-
                             <button type="submit" id="submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-all-300 shadow-md flex items-center justify-center gap-2 cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                </svg>
                                 Confirmar y Enviar Solicitud
                             </button>
-
-                            <p id="error-no-selection" class="text-xs text-red-500 font-semibold mt-2 hidden">⚠️ Por favor, seleccioná al menos un trabajo.</p>
-
-                            <div class="pt-4 mt-2 border-t border-slate-100 text-left space-y-2">
-                                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                                    🛡️ Reembolso Asegurado
-                                </div>
-                                <p class="text-[11px] text-slate-400 leading-relaxed">
-                                    Contás con **Garantía de Satisfacción**. Si no estás conforme con el resultado, podés pedir un reembolso inmediato del 100% abajo.
-                                </p>
-                            </div>
+                            <p id="error-no-selection" class="text-xs text-red-500 font-semibold mt-2 hidden">⚠️ Seleccioná al menos un trabajo.</p>
                         </div>
                     </div>
                 </form>
@@ -207,20 +169,20 @@ index.html
                         <div>
                             <h2 class="text-xl font-black flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></span>
-                                Consola de Administración Remota
+                                Consola de Administración Central
                             </h2>
-                            <p class="text-xs text-slate-400 mt-1">Gestión central de solicitudes recibidas en tiempo real.</p>
+                            <p class="text-xs text-slate-400 mt-1">Sincronización total de solicitudes en tiempo real.</p>
                         </div>
-                        <button onclick="clearCompletedOrders()" class="bg-red-500/10 text-red-400 hover:bg-red-500/25 border border-red-500/30 text-xs px-3 py-1.5 rounded-lg transition-all-300 cursor-pointer">
+                        <button id="clear-btn" onclick="clearCompletedOrders()" class="bg-red-500/10 text-red-400 hover:bg-red-500/25 border border-red-500/30 text-xs px-3 py-1.5 rounded-lg transition-all-300 cursor-pointer">
                             Limpiar Historial Finalizado
                         </button>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
-                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2">📦 Pedidos Registrados</h3>
+                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2">📦 Pedidos Activos en el Hogar</h3>
                     <div id="admin-orders-container" class="space-y-4">
-                        <p class="text-sm text-slate-400 italic text-center py-8">No hay solicitudes activas de servicios aún.</p>
+                        <p class="text-sm text-slate-400 italic text-center py-8">Buscando registros en la base de datos...</p>
                     </div>
                 </div>
             </div>
@@ -235,17 +197,11 @@ index.html
     <div id="refund-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="text-center space-y-2">
-                <div class="w-12 h-12 bg-red-100 text-red-600 flex items-center justify-center rounded-full mx-auto text-xl font-bold">🛡️</div>
-                <h3 class="font-bold text-lg text-slate-800">Solicitar Reembolso Automático</h3>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-xl text-xs space-y-1.5 border border-slate-100">
-                <div><strong>Servicio:</strong> <span id="ref-modal-desc" class="text-slate-600"></span></div>
-                <div><strong>Valor:</strong> <span id="ref-modal-price" class="text-emerald-600 font-bold"></span></div>
-                <div><strong>Pedido de:</strong> <span id="ref-modal-user" class="text-slate-600"></span></div>
+                <h3 class="font-bold text-lg text-slate-800">Solicitar Reembolso</h3>
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-500 uppercase">Motivo (Opcional)</label>
-                <textarea id="ref-modal-reason" placeholder="Ej: Cancelación del pedido" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs h-16 focus:outline-none focus:border-red-500"></textarea>
+                <label class="text-xs font-bold text-slate-500 uppercase">Motivo de Cancelación</label>
+                <textarea id="ref-modal-reason" placeholder="Ej: No hace falta hacerlo hoy" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs h-16 focus:outline-none"></textarea>
             </div>
             <div class="grid grid-cols-2 gap-3 pt-2">
                 <button onclick="executeRefundClient()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-colors cursor-pointer">Confirmar</button>
@@ -256,9 +212,9 @@ index.html
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
+        // Tu configuración oficial de Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyCWvojbGP_qirYNBw3NoGI6xql9_eD_Kec",
           authDomain: "el-trabajo-c3486.firebaseapp.com",
@@ -268,76 +224,57 @@ index.html
           appId: "1:899210740860:web:a19676079b480972d1b5f9"
         };
 
-        const appId = 'santi-app-1';
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const colRef = collection(db, 'ordenes_servicios'); // Ruta directa y unificada para evitar pérdidas de sincronización
 
-        let currentUser = null;
         let allOrders = [];
         let activeRefundTargetId = null;
-        let currentRole = null; // Guardará 'adry', 'gaby' o 'santi'
+        let currentRole = null;
+        let lastOrdersCount = -1;
 
-        signInAnonymously(auth).catch(e => console.error("Error Auth:", e));
-
-        onAuthStateChanged(auth, user => { 
-            if(user) { 
-                currentUser = user; 
-                listenOrders(); 
-            } 
-        });
-
-        function listenOrders() {
-            const colRef = collection(db, 'artifacts', appId, 'ordenes_servicios');
-            onSnapshot(colRef, snapshot => {
-                let freshOrders = [];
-                let tienePendientes = false;
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    freshOrders.push({id: docSnap.id, ...data});
-                    if (data.status === "Pendiente") tienePendientes = true;
-                });
-
-                freshOrders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-                allOrders = freshOrders;
-
-                renderAdminOrders();
-                actualizarBadgePendientes(tienePendientes);
-                
-                // Auto-actualizar el buscador si es Gaby o Adry para mantener la sincronización en vivo
-                if (currentRole && currentRole !== 'santi') {
-                    window.searchOrderStatus();
-                }
-            });
+        // Pedir permiso para Notificaciones Push del Navegador
+        if (Notification.permission === "default") {
+            Notification.requestPermission();
         }
 
-        // --- SISTEMA DE LOGINS Y AUTENTICACIÓN LOCAL MOCK ---
+        // --- MANEJO DE PERSISTENCIA (GUARDAR INICIO DE SESIÓN) ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedRole = localStorage.getItem('santi_sa_session');
+            if (savedRole) {
+                initSession(savedRole);
+            }
+        });
+
         window.login = function() {
             const pass = document.getElementById('login-pass').value.trim();
             const errorEl = document.getElementById('login-error');
             errorEl.classList.add('hidden');
 
             if (pass === '1975') {
+                localStorage.setItem('santi_sa_session', 'adry');
                 initSession('adry');
             } else if (pass === '1985') {
+                localStorage.setItem('santi_sa_session', 'gaby');
                 initSession('gaby');
             } else if (pass === 'Sanfunpro') {
+                localStorage.setItem('santi_sa_session', 'santi');
                 initSession('santi');
             } else {
-                errorEl.innerText = "❌ Contraseña incorrecta. Intentá de nuevo.";
+                errorEl.innerText = "❌ Contraseña incorrecta.";
                 errorEl.classList.remove('hidden');
             }
         };
 
         window.logout = function() {
+            localStorage.removeItem('santi_sa_session');
             currentRole = null;
             document.getElementById('login-pass').value = '';
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('app-container').classList.add('hidden');
         };
 
-        function initSession(role) {
+        window.initSession = function(role) {
             currentRole = role;
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
@@ -346,82 +283,82 @@ index.html
             const banner = document.getElementById('personalized-banner');
             
             if (role === 'santi') {
-                // Interfaz completa para vos
                 navContainer.innerHTML = `
-                    <button onclick="switchTab('client-view')" id="btn-tab-client" class="px-4 py-2 rounded-lg text-xs font-bold transition-all-300 text-slate-400 hover:text-white cursor-pointer">🛒 Pedidos</button>
-                    <button onclick="switchTab('admin-view')" id="btn-tab-admin" class="px-4 py-2 rounded-lg text-xs font-bold transition-all-300 bg-indigo-600 text-white flex items-center gap-1 cursor-pointer">
-                        ⚡ Panel Santi
-                        <span id="pending-badge" class="hidden w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                    </button>
-                    <button onclick="logout()" class="ml-3 bg-slate-700/50 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-bold transition-colors cursor-pointer">Salir</button>
+                    <button onclick="switchTab('client-view')" id="btn-tab-client" class="px-4 py-2 rounded-lg text-xs font-bold transition-all-300 text-slate-400 hover:text-white cursor-pointer">🛒 Solicitar</button>
+                    <button onclick="switchTab('admin-view')" id="btn-tab-admin" class="px-4 py-2 rounded-lg text-xs font-bold transition-all-300 bg-indigo-600 text-white cursor-pointer">⚡ Panel Admin</button>
+                    <button onclick="logout()" class="ml-3 bg-slate-700 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-bold transition-colors cursor-pointer">Salir</button>
                 `;
                 window.switchTab('admin-view');
                 banner.classList.add('hidden');
                 document.getElementById('client-name').value = "Santi Admin";
-                document.getElementById('search-order-name').value = "";
+                document.getElementById('clear-btn').classList.remove('hidden');
+            } else if (role === 'tv-monitor') {
+                // Interfaz para Chromecast/Smart TV (sin botones, solo lectura de la Consola)
+                navContainer.innerHTML = `
+                    <span class="text-amber-400 text-xs font-bold px-2 flex items-center gap-1">📺 Modo Monitor TV</span>
+                    <button onclick="logout()" class="ml-3 bg-slate-700 text-white text-xs px-2 py-1 rounded-lg font-bold cursor-pointer">Volver</button>
+                `;
+                window.switchTab('admin-view');
+                banner.classList.add('hidden');
+                document.getElementById('clear-btn').classList.add('hidden'); // Ocultar limpieza en TV
             } else {
-                // Interfaz limpia para Gaby y Adry
                 window.switchTab('client-view');
                 let nameStr = (role === 'gaby') ? 'Mamá Gaby' : 'Papá Adry';
                 
                 navContainer.innerHTML = `
-                    <span class="text-white text-xs font-bold px-2 flex items-center gap-1">👤 Sesión: ${nameStr}</span>
-                    <button onclick="logout()" class="ml-3 bg-slate-700 hover:bg-red-600 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition-colors cursor-pointer">Cerrar Sesión</button>
+                    <span class="text-white text-xs font-bold px-2">👤 Sesión: ${nameStr}</span>
+                    <button onclick="logout()" class="ml-3 bg-slate-700 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-lg font-bold transition-colors cursor-pointer">Cerrar Sesión</button>
                 `;
 
                 document.getElementById('client-name').value = nameStr;
                 document.getElementById('search-order-name').value = nameStr;
 
-                // Renderizar recomendaciones adaptadas en base al rol
                 banner.classList.remove('hidden');
                 if (role === 'gaby') {
-                    banner.className = "bg-emerald-50 border-emerald-200 text-emerald-900 rounded-2xl p-5 border mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 animate-fade-in";
-                    banner.innerHTML = `
-                        <div>
-                            <h4 class="font-bold text-sm text-emerald-800 flex items-center gap-1.5">🌿 Panel de Mamá Gaby</h4>
-                            <p class="text-xs text-emerald-700/90 mt-0.5">Sugerencias recomendadas de hoy: <strong>Regar todas las Plantas</strong> y realizar una <strong>Organización Extrema de Alacena</strong>.</p>
-                        </div>
-                        <span class="text-[10px] font-bold bg-emerald-600 text-white px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">Hogar Eficiente</span>
-                    `;
+                    banner.className = "bg-emerald-50 border-emerald-200 text-emerald-900 rounded-2xl p-5 border mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
+                    banner.innerHTML = `<div><h4 class="font-bold text-sm text-emerald-800">🌿 Panel de Mamá Gaby</h4><p class="text-xs text-emerald-700/90 mt-0.5">Sugerencias: <strong>Regar Plantas</strong> y <strong>Organización Extrema de Alacena</strong>.</p></div>`;
                 } else {
                     banner.className = "bg-blue-50 border-blue-200 text-blue-900 rounded-2xl p-5 border mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
-                    banner.innerHTML = `
-                        <div>
-                            <h4 class="font-bold text-sm text-blue-800 flex items-center gap-1.5">💻 Panel de Papá Adry</h4>
-                            <p class="text-xs text-blue-700/90 mt-0.5">Sugerencias recomendadas de hoy: <strong>Optimizar Computadora</strong> y eliminar temporales para mejorar rendimiento en juegos o trabajo.</p>
-                        </div>
-                        <span class="text-[10px] font-bold bg-blue-600 text-white px-2.5 py-1 rounded-full uppercase tracking-wider shrink-0">Máxima Velocidad</span>
-                    `;
+                    banner.innerHTML = `<div><h4 class="font-bold text-sm text-blue-800">💻 Panel de Papá Adry</h4><p class="text-xs text-blue-700/90 mt-0.5">Sugerencias: <strong>Optimizar Computadora</strong> para mejorar rendimiento.</p></div>`;
                 }
-                setTimeout(() => { window.searchOrderStatus(); }, 200);
+                setTimeout(() => { window.searchOrderStatus(); }, 300);
             }
         }
+
+        // --- ESCUCHA DE FIREBASE EN TIEMPO REAL CON NOTIFICACIONES ---
+        onSnapshot(colRef, snapshot => {
+            let freshOrders = [];
+            snapshot.forEach(docSnap => {
+                freshOrders.push({id: docSnap.id, ...docSnap.data()});
+            });
+
+            freshOrders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+            allOrders = freshOrders;
+
+            // Enviar notificación al navegador si entra un pedido nuevo
+            if (lastOrdersCount !== -1 && freshOrders.length > lastOrdersCount) {
+                const nuevoPedido = freshOrders[0];
+                if (Notification.permission === "granted" && currentRole === 'santi') {
+                    new Notification("🚀 ¡Nuevo Pedido en Santi S.A.!", {
+                        body: `${nuevoPedido.clientName} solicitó: ${nuevoPedido.services.join(', ')}`,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                    });
+                }
+                showToast("🔔 ¡Se registró una nueva solicitud en el sistema!");
+            }
+            lastOrdersCount = freshOrders.length;
+
+            renderAdminOrders();
+            if (currentRole && currentRole !== 'santi' && currentRole !== 'tv-monitor') {
+                window.searchOrderStatus();
+            }
+        });
 
         // --- MANEJO DE TABS ---
         window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-
-            const btnClient = document.getElementById('btn-tab-client');
-            const btnAdmin = document.getElementById('btn-tab-admin');
-
-            if (!btnClient || !btnAdmin) return;
-
-            if (tabId === 'client-view') {
-                btnClient.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all-300 bg-indigo-600 text-white cursor-pointer";
-                btnAdmin.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all-300 text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer";
-            } else {
-                btnAdmin.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all-300 bg-indigo-600 text-white flex items-center gap-1 cursor-pointer";
-                btnClient.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all-300 text-slate-400 hover:text-white cursor-pointer";
-            }
         };
-
-        function actualizarBadgePendientes(mostrar) {
-            const badge = document.getElementById('pending-badge');
-            if (!badge) return;
-            if (mostrar) badge.classList.remove('hidden');
-            else badge.classList.add('hidden');
-        }
 
         const precios = { sweep: 1500, water: 1000, mobile: 2500, pc: 4000, kitchen: 3500 };
 
@@ -434,13 +371,6 @@ index.html
             }
             if (document.getElementById('srv-pc').checked) total += precios.pc;
             if (document.getElementById('srv-kitchen').checked) total += precios.kitchen;
-            
-            if (document.getElementById('srv-custom').checked) {
-                document.getElementById('custom-details').classList.remove('hidden');
-                total += parseInt(document.getElementById('custom-price').value) || 0;
-            } else { 
-                document.getElementById('custom-details').classList.add('hidden'); 
-            }
             document.getElementById('live-total').innerText = `$${total.toLocaleString('es-AR')}`;
         };
 
@@ -452,10 +382,6 @@ index.html
             if (document.getElementById('srv-mobile').checked) tareas.push(`Optimizar Celular (x${document.getElementById('qty-mobile').value})`);
             if (document.getElementById('srv-pc').checked) tareas.push("Optimizar PC");
             if (document.getElementById('srv-kitchen').checked) tareas.push("Ordenar Alacena");
-            if (document.getElementById('srv-custom').checked) {
-                const desc = document.getElementById('custom-desc').value.trim() || "Trabajo Especial";
-                tareas.push(`Personalizado: ${desc}`);
-            }
 
             if(!tareas.length) { 
                 document.getElementById('error-no-selection').classList.remove('hidden'); 
@@ -464,7 +390,6 @@ index.html
             document.getElementById('error-no-selection').classList.add('hidden');
 
             const orderData = {
-                appId: appId,
                 clientName: document.getElementById('client-name').value.trim(),
                 clientEmail: document.getElementById('client-email').value.trim(),
                 datePref: document.getElementById('pref-date').value.trim() || "Lo antes posible",
@@ -476,9 +401,7 @@ index.html
 
             try {
                 document.getElementById('submit-btn').disabled = true;
-                const colRef = collection(db, 'artifacts', appId, 'ordenes_servicios');
                 await addDoc(colRef, orderData);
-                
                 showToast("🚀 ¡Pedido enviado con éxito!");
                 document.getElementById('services-form').reset();
                 if(currentRole && currentRole !== 'santi') {
@@ -487,7 +410,7 @@ index.html
                 window.updateTotal();
             } catch(err) { 
                 console.error(err); 
-                showToast("❌ Error al procesar la orden", "error");
+                showToast("❌ Error al guardar en base de datos", "error");
             } finally { 
                 document.getElementById('submit-btn').disabled = false; 
             }
@@ -518,11 +441,11 @@ index.html
                 <div class="p-3 bg-slate-50 border rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
                     <div>
                         <p class="font-bold text-slate-700">${p.services.join(' + ')}</p>
-                        <p class="text-slate-400 mt-1">Precio total: <strong class="text-slate-600">${p.total}</strong> · Fecha/Preferencia: ${p.datePref}</p>
+                        <p class="text-slate-400 mt-1">Precio: <strong class="text-slate-600">${p.total}</strong> · Preferencia: ${p.datePref}</p>
                     </div>
-                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-2">
                         <span class="px-2 py-0.5 rounded font-black border uppercase text-[10px] ${col}">${p.status}</span>
-                        ${p.status === "Pendiente" || p.status === "En proceso" ? `<button type="button" onclick="openRefundModal('${p.id}', '${p.services.join(', ')}', '${p.total}', '${p.clientName}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded border border-red-200 font-bold transition">Reembolsar</button>` : ''}
+                        ${p.status === "Pendiente" || p.status === "En proceso" ? `<button type="button" onclick="openRefundModal('${p.id}')" class="bg-red-50 text-red-600 px-2.5 py-1 rounded border border-red-200 font-bold transition">Reembolsar</button>` : ''}
                     </div>
                 </div>`;
             });
@@ -530,12 +453,8 @@ index.html
             box.classList.remove('hidden');
         };
 
-        window.openRefundModal = function(id, desc, price, user) {
+        window.openRefundModal = function(id) {
             activeRefundTargetId = id;
-            document.getElementById('ref-modal-desc').innerText = desc;
-            document.getElementById('ref-modal-price').innerText = price;
-            document.getElementById('ref-modal-user').innerText = user;
-            document.getElementById('ref-modal-reason').value = "";
             document.getElementById('refund-modal').classList.remove('hidden');
         };
 
@@ -547,18 +466,13 @@ index.html
         window.executeRefundClient = async function() {
             if(!activeRefundTargetId) return;
             try {
-                const docRef = doc(db, 'artifacts', appId, 'ordenes_servicios', activeRefundTargetId);
-                const motivo = document.getElementById('ref-modal-reason').value.trim() || "Cancelado de manera inmediata.";
+                const docRef = doc(db, 'ordenes_servicios', activeRefundTargetId);
+                const motivo = document.getElementById('ref-modal-reason').value.trim() || "Cancelado por el cliente.";
                 await updateDoc(docRef, { status: "Reembolsado", refundReason: motivo });
-                showToast("🛡️ Reembolso completado de forma inmediata");
                 closeRefundModal();
-            } catch(err) {
-                console.error(err);
-                showToast("❌ Error al procesar devolución", "error");
-            }
+            } catch(err) { console.error(err); }
         };
 
-        // --- CONSOLA DE ADMINISTRADOR (SANTI) ---
         function renderAdminOrders() {
             const container = document.getElementById('admin-orders-container');
             if(!container) return;
@@ -586,12 +500,13 @@ index.html
                         <div>⚙️ <span class="font-semibold text-slate-700">Estado:</span> <span class="uppercase font-bold text-slate-800">${p.status}</span></div>
                         ${p.refundReason ? `<div class="text-red-600 font-medium">💬 Motivo Devolución: ${p.refundReason}</div>` : ''}
                     </div>
+                    ${currentRole === 'santi' ? `
                     <div class="flex gap-2 pt-1">
-                        ${p.status === 'Pendiente' ? `<button onclick="updateStatus('${p.id}', 'En proceso')" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">⚡ Empezar</button>` : ''}
-                        ${p.status === 'En proceso' ? `<button onclick="updateStatus('${p.id}', 'Completado')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">✅ Completar</button>` : ''}
-                        ${p.status !== "Completado" && p.status !== "Reembolsado" ? `<button onclick="updateStatus('${p.id}', 'Reembolsado')" class="bg-red-100 hover:bg-red-200 text-red-700 text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">🛡️ Reembolsar</button>` : ''}
-                        <button onclick="deleteOrder('${p.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] px-2.5 py-1.5 rounded-lg ml-auto cursor-pointer">🗑️ Eliminar</button>
-                    </div>
+                        ${p.status === 'Pendiente' ? `<button onclick="updateStatus('${p.id}', 'En proceso')" class="bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">⚡ Empezar</button>` : ''}
+                        ${p.status === 'En proceso' ? `<button onclick="updateStatus('${p.id}', 'Completado')" class="bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">✅ Completar</button>` : ''}
+                        ${p.status !== "Completado" && p.status !== "Reembolsado" ? `<button onclick="updateStatus('${p.id}', 'Reembolsado')" class="bg-red-100 text-red-700 text-[11px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">🛡️ Reembolsar</button>` : ''}
+                        <button onclick="deleteOrder('${p.id}')" class="bg-slate-100 text-slate-600 text-[11px] px-2.5 py-1.5 rounded-lg ml-auto cursor-pointer">🗑️ Eliminar</button>
+                    </div>` : ''}
                 </div>`;
             });
             container.innerHTML = html;
@@ -599,23 +514,15 @@ index.html
 
         window.updateStatus = async function(id, nuevoEstado) {
             try {
-                const docRef = doc(db, 'artifacts', appId, 'ordenes_servicios', id);
-                await updateDoc(docRef, { status: nuevoEstado });
-                showToast(`Estado cambiado a: ${nuevoEstado}`);
-            } catch (err) {
-                console.error(err);
-            }
+                await updateDoc(doc(db, 'ordenes_servicios', id), { status: nuevoEstado });
+            } catch (err) { console.error(err); }
         };
 
         window.deleteOrder = async function(id) {
             if (confirm("¿Seguro que querés eliminar permanentemente este registro?")) {
                 try {
-                    const docRef = doc(db, 'artifacts', appId, 'ordenes_servicios', id);
-                    await deleteDoc(docRef);
-                    showToast("Registro removido");
-                } catch (err) {
-                    console.error(err);
-                }
+                    await deleteDoc(doc(db, 'ordenes_servicios', id));
+                } catch (err) { console.error(err); }
             }
         };
 
@@ -624,13 +531,9 @@ index.html
             const finalizados = allOrders.filter(p => p.status === "Completado" || p.status === "Reembolsado");
             for (let p of finalizados) {
                 try {
-                    const docRef = doc(db, 'artifacts', appId, 'ordenes_servicios', p.id);
-                    await deleteDoc(docRef);
-                } catch (e) {
-                    console.error(e);
-                }
+                    await deleteDoc(doc(db, 'ordenes_servicios', p.id));
+                } catch (e) { console.error(e); }
             }
-            showToast("🧹 Historial finalizado limpio");
         };
 
         function showToast(msg, type = "success") {
@@ -642,9 +545,7 @@ index.html
             setTimeout(() => toast.remove(), 3500);
         }
 
-        window.onload = function() {
-            window.updateTotal();
-        };
+        window.onload = function() { window.updateTotal(); };
     </script>
 </body>
 </html>
