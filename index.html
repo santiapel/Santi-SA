@@ -132,20 +132,24 @@
         const SUPABASE_ANON_KEY = "CrpoZxVBBS6XBq4eS3cAcB4SPK3fuiE7jMzy5zbxJoOHH00ZE8OttcIesYMANOjp0Rt8H96V8PnRYs6UuZILeQ==";
         // ===================================================================
 
-        // Inicializamos usando el objeto global de la ventana una vez que cargue la librería externa
         let supabase;
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const savedRole = localStorage.getItem('santi_sa_session');
-            if (savedRole) initSession(savedRole);
-            setInterval(() => { if(currentRole) fetchOrders(); }, 10000); // Auto-actualiza cada 10 segs
-        });
-
         let allOrders = [];
         let currentRole = null;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            // Inicialización de la base de datos
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Verificación de sesión guardada
+            const savedRole = localStorage.getItem('santi_sa_session');
+            if (savedRole) initSession(savedRole);
+            
+            // Auto-actualización cada 10 segundos
+            setInterval(() => { if(currentRole) fetchOrders(); }, 10000);
+        });
 
-        window.login = function() {
+        // FUNCIONES DE CONTROL DE ACCESO
+        function login() {
             const pass = document.getElementById('login-pass').value.trim();
             const errorEl = document.getElementById('login-error');
             errorEl.classList.add('hidden');
@@ -154,17 +158,19 @@
             else if (pass === '1985') { localStorage.setItem('santi_sa_session', 'gaby'); initSession('gaby'); }
             else if (pass === 'Sanfunpro') { localStorage.setItem('santi_sa_session', 'santi'); initSession('santi'); }
             else { errorEl.innerText = "❌ Contraseña incorrecta."; errorEl.classList.remove('hidden'); }
-        };
+        }
+        window.login = login;
 
-        window.logout = function() {
+        function logout() {
             localStorage.removeItem('santi_sa_session');
             currentRole = null;
             document.getElementById('login-pass').value = '';
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('app-container').classList.add('hidden');
-        };
+        }
+        window.logout = logout;
 
-        window.initSession = function(role) {
+        function initSession(role) {
             currentRole = role;
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
@@ -177,15 +183,15 @@
                     <button onclick="switchTab('admin-view')" class="px-3 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg cursor-pointer">⚡ Admin</button>
                     <button onclick="logout()" class="ml-2 bg-slate-700 text-white text-xs px-2 py-1 rounded font-bold hover:bg-red-600 cursor-pointer">Salir</button>
                 `;
-                window.switchTab('admin-view');
+                switchTab('admin-view');
                 document.getElementById('client-name').value = "Santi Admin";
                 if(clearBtn) clearBtn.classList.remove('hidden');
             } else if (role === 'tv-monitor') {
                 navContainer.innerHTML = `<span class="text-amber-400 text-xs font-bold px-2 flex items-center gap-1">📺 Monitor TV</span><button onclick="logout()" class="ml-2 bg-slate-700 text-xs px-2 py-1 rounded cursor-pointer">Volver</button>`;
-                window.switchTab('admin-view');
+                switchTab('admin-view');
                 if(clearBtn) clearBtn.classList.add('hidden');
             } else {
-                window.switchTab('client-view');
+                switchTab('client-view');
                 let nameStr = (role === 'gaby') ? 'Mamá Gaby' : 'Papá Adry';
                 navContainer.innerHTML = `<span class="text-white text-xs font-bold px-2">👤 ${nameStr}</span><button onclick="logout()" class="ml-2 bg-slate-700 text-white text-xs px-2 py-1 rounded hover:bg-red-600 cursor-pointer">Salir</button>`;
                 document.getElementById('client-name').value = nameStr;
@@ -193,21 +199,25 @@
                 if(clearBtn) clearBtn.classList.add('hidden');
             }
             fetchOrders();
-        };
+        }
+        window.initSession = initSession;
 
-        window.switchTab = function(tabId) {
+        function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-        };
+        }
+        window.switchTab = switchTab;
 
-        window.updateTotal = function() {
+        function updateTotal() {
             let total = 0;
             if (document.getElementById('srv-sweep').checked) total += 1500;
             if (document.getElementById('srv-water').checked) total += 1000;
             if (document.getElementById('srv-mobile').checked) total += 2500;
             document.getElementById('live-total').innerText = `$${total.toLocaleString('es-AR')}`;
-        };
+        }
+        window.updateTotal = updateTotal;
 
+        // OPERACIONES DE LA BASE DE DATOS (SUPABASE)
         async function fetchOrders() {
             if (!supabase) return;
             const { data, error } = await supabase
@@ -221,8 +231,9 @@
                 renderOrders();
             }
         }
+        window.fetchOrders = fetchOrders;
 
-        window.submitOrder = async function(e) {
+        async function submitOrder(e) {
             e.preventDefault();
             let tareas = [];
             if (document.getElementById('srv-sweep').checked) tareas.push("Barrer Casa");
@@ -255,9 +266,10 @@
                 console.error(error);
             }
             document.getElementById('submit-btn').disabled = false;
-        };
+        }
+        window.submitOrder = submitOrder;
 
-        window.updateStatus = async function(id, nuevoEstado) {
+        async function updateStatus(id, nuevoEstado) {
             const { error } = await supabase
                 .from('pedidos')
                 .update({ status: nuevoEstado })
@@ -269,9 +281,10 @@
             } else {
                 showToast("Error al guardar estado", "error");
             }
-        };
+        }
+        window.updateStatus = updateStatus;
 
-        window.deleteOrder = async function(id) {
+        async function deleteOrder(id) {
             if (!confirm("¿Querés eliminar esta solicitud permanentemente?")) return;
             const { error } = await supabase
                 .from('pedidos')
@@ -284,9 +297,10 @@
             } else {
                 showToast("Error al eliminar", "error");
             }
-        };
+        }
+        window.deleteOrder = deleteOrder;
 
-        window.clearCompletedHistory = async function() {
+        async function clearCompletedHistory() {
             if (!confirm("¿Eliminar todas las órdenes completadas?")) return;
             const { error } = await supabase
                 .from('pedidos')
@@ -299,9 +313,10 @@
             } else {
                 showToast("Error al limpiar historial", "error");
             }
-        };
+        }
+        window.clearCompletedHistory = clearCompletedHistory;
 
-        window.searchOrderStatus = function() {
+        function searchOrderStatus() {
             const name = document.getElementById('search-order-name').value.trim().toLowerCase();
             const box = document.getElementById('search-result-box');
             if(!name) { box.classList.add('hidden'); return; }
@@ -328,7 +343,8 @@
             });
             box.innerHTML = html;
             box.classList.remove('hidden');
-        };
+        }
+        window.searchOrderStatus = searchOrderStatus;
 
         function renderOrders() {
             const container = document.getElementById('admin-orders-container');
@@ -360,7 +376,7 @@
                 </div>`;
             });
             container.innerHTML = html;
-            window.searchOrderStatus();
+            searchOrderStatus();
         }
 
         function showToast(msg, type = "success") {
@@ -371,8 +387,6 @@
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
         }
-        
-        window.fetchOrders = fetchOrders;
     </script>
 </body>
 </html>
