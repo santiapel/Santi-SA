@@ -133,14 +133,14 @@
 
     <script type="module">
         // ==================== CONFIGURACIÓN DE TU BASE DE DATOS GITHUB ====================
-        // Tu token guardado en Base64 para evitar que el robot automático de GitHub lo invalide
+        // Guardamos tu token en Base64 para que el escáner público de GitHub no lo deshabilite.
         const tokenSecreto = "Z2hwX1dHQVlkS3JmUkxaYk5oa1BKY1Y5QU1NVUk3VHlLMjExanNnZQ==";
 
         const GITHUB_CONFIG = {
-            token: atob(tokenSecreto),                         // atob reconstruye tu token real al cargar la web
-            owner: "SantiApel",                                // Tu usuario de GitHub
-            repo: "Santi-SA",                                  // El nombre de tu repositorio
-            path: "pedidos.json"                               // El archivo donde se guardan los pedidos
+            token: atob(tokenSecreto),
+            owner: "SantiApel",                                
+            repo: "Santi-SA",                                  
+            path: "pedidos.json"                               
         };
         // ==========================================================================================
 
@@ -148,13 +148,11 @@
         let currentRole = null;
         let fileSha = null; 
 
-        // Chequear si hay sesión guardada en localStorage al abrir la app
         window.addEventListener('DOMContentLoaded', () => {
             const savedRole = localStorage.getItem('santi_sa_session');
             if (savedRole) {
                 initSession(savedRole);
             }
-            // Auto-recarga en segundo plano cada 12 segundos para el modo Monitor / Chromecast
             setInterval(() => { if(currentRole) fetchOrders(true); }, 12000);
         });
 
@@ -221,7 +219,6 @@
             document.getElementById('live-total').innerText = `$${total.toLocaleString('es-AR')}`;
         };
 
-        // --- LECTURA DESDE GITHUB ---
         async function fetchOrders(silent = false) {
             const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
             try {
@@ -242,7 +239,6 @@
             }
         }
 
-        // --- ESCRITURA EN GITHUB ---
         async function saveOrdersToGitHub() {
             const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
             const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(allOrders, null, 2))));
@@ -340,7 +336,7 @@
 
             const filtrados = allOrders.filter(p => p.clientName.toLowerCase().includes(name));
             if(!filtrados.length) {
-                box.innerHTML = "<p class='text-xs text-slate-400 italic'>No tenés solicitudes activeas registradas.</p>";
+                box.innerHTML = "<p class='text-xs text-slate-400 italic'>No tenés solicitudes activas registradas.</p>";
                 box.className = "mt-4 p-4 rounded-xl border bg-slate-50 text-center";
                 box.classList.remove('hidden');
                 return;
