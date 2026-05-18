@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Santi S.A. - Hogar Conectado (GitHub DB)</title>
+    <title>Santi S.A. - Hogar Conectado (Supabase Cloud)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .transition-all-300 { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
@@ -16,20 +16,17 @@
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6 text-center border border-slate-100">
             <div>
-                <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Santi S.A. GitHub-DB</span>
+                <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Santi S.A. Cloud DB</span>
                 <h2 class="text-2xl font-black text-slate-800 mt-2">Ingreso al Sistema</h2>
-                <p class="text-xs text-slate-400 mt-1">Colocá tu clave personal para acceder a tu panel.</p>
             </div>
             <div class="space-y-2 text-left">
                 <label class="text-xs font-bold text-slate-500 uppercase">Contraseña de Acceso</label>
                 <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key === 'Enter') login()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-center text-lg font-bold tracking-widest focus:outline-none focus:border-indigo-500">
                 <p id="login-error" class="text-xs text-red-500 font-semibold mt-1 hidden"></p>
             </div>
-            <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md cursor-pointer">
-                Entrar a mi Panel
-            </button>
+            <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md cursor-pointer">Entrar a mi Panel</button>
             <div class="pt-4 border-t border-slate-100">
-                <button onclick="initSession('tv-monitor')" class="text-xs text-indigo-500 hover:underline font-medium">📺 Modo Monitor (Para Chromecast / Smart TV)</button>
+                <button onclick="initSession('tv-monitor')" class="text-xs text-indigo-500 hover:underline font-medium">📺 Modo Monitor (Smart TV)</button>
             </div>
         </div>
     </div>
@@ -48,8 +45,6 @@
         <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
 
         <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
-            <div id="personalized-banner" class="hidden"></div>
-
             <div id="client-view" class="tab-content active space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                     <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Tus solicitudes en tiempo real:</h3>
@@ -110,7 +105,7 @@
                 <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div>
                         <h2 class="text-xl font-black flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>Consola Remota Santi S.A.</h2>
-                        <p class="text-xs text-slate-400 mt-1">Sincronizado directamente con tu archivo en GitHub.</p>
+                        <p class="text-xs text-slate-400 mt-1">Conexión en la nube en tiempo real vía Supabase.</p>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="fetchOrders()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs px-3 py-1.5 rounded-lg cursor-pointer">🔄 Actualizar Lista</button>
@@ -120,42 +115,35 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 border-b pb-2">📦 Órdenes Activas</h3>
                     <div id="admin-orders-container" class="space-y-4">
-                        <p class="text-sm text-slate-400 italic text-center py-8">Cargando datos desde GitHub...</p>
+                        <p class="text-sm text-slate-400 italic text-center py-8">Cargando base de datos...</p>
                     </div>
                 </div>
             </div>
         </main>
 
         <footer class="bg-slate-900 text-slate-500 py-6 text-center text-xs mt-12">
-            <p>© 2026 Santiago Soluciones Remotas · GitHub Database Connection</p>
+            <p>© 2026 Santiago Soluciones Remotas · Supabase Cloud Database</p>
         </footer>
     </div>
 
-    <script type="module">
-        // ==================== CONFIGURACIÓN DE TU BASE DE DATOS GITHUB ====================
-        // Dividimos tu token normal en dos pedazos para que el robot de GitHub no lo borre al escanear.
-        const parte1 = "ghp_EZzTeQ5K0CnsVtPf";
-        const parte2 = "VAjDHC5vxUOgSu13TfVm";
+    <script>
+        // ==================== CONFIGURACIÓN DE SUPABASE ====================
+        const SUPABASE_URL = "https://yybmvijevifucuewucgk.supabase.co";
+        const SUPABASE_ANON_KEY = "CrpoZxVBBS6XBq4eS3cAcB4SPK3fuiE7jMzy5zbxJoOHH00ZE8OttcIesYMANOjp0Rt8H96V8PnRYs6UuZILeQ==";
+        // ===================================================================
 
-        const GITHUB_CONFIG = {
-            token: parte1 + parte2,                            // El código los junta automáticamente acá en memoria
-            owner: "SantiApel",                                // Tu usuario de GitHub
-            repo: "Santi-SA",                                  // El nombre de tu repositorio
-            path: "pedidos.json"                               // El archivo donde se guardan los pedidos
-        };
-        // ==========================================================================================
+        // Inicializamos usando el objeto global de la ventana una vez que cargue la librería externa
+        let supabase;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const savedRole = localStorage.getItem('santi_sa_session');
+            if (savedRole) initSession(savedRole);
+            setInterval(() => { if(currentRole) fetchOrders(); }, 10000); // Auto-actualiza cada 10 segs
+        });
 
         let allOrders = [];
         let currentRole = null;
-        let fileSha = null; 
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedRole = localStorage.getItem('santi_sa_session');
-            if (savedRole) {
-                initSession(savedRole);
-            }
-            setInterval(() => { if(currentRole) fetchOrders(true); }, 12000);
-        });
 
         window.login = function() {
             const pass = document.getElementById('login-pass').value.trim();
@@ -220,48 +208,17 @@
             document.getElementById('live-total').innerText = `$${total.toLocaleString('es-AR')}`;
         };
 
-        async function fetchOrders(silent = false) {
-            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-            try {
-                const res = await fetch(url, {
-                    headers: { "Authorization": `token ${GITHUB_CONFIG.token}`, "Accept": "application/vnd.github.v3+json" }
-                });
-                if (res.status === 200) {
-                    const data = await res.json();
-                    fileSha = data.sha;
-                    const content = decodeURIComponent(escape(atob(data.content))); 
-                    allOrders = JSON.parse(content);
-                } else if (res.status === 404) {
-                    allOrders = []; 
-                }
-                renderOrders();
-            } catch (err) {
-                console.error("Error leyendo base de datos de GitHub:", err);
-            }
-        }
-
-        async function saveOrdersToGitHub() {
-            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
-            const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(allOrders, null, 2))));
+        async function fetchOrders() {
+            if (!supabase) return;
+            const { data, error } = await supabase
+                .from('pedidos')
+                .select('*');
             
-            const bodyData = {
-                message: "🤖 Actualización automática de registros · Santi S.A.",
-                content: contentBase64
-            };
-            if (fileSha) bodyData.sha = fileSha;
-
-            const res = await fetch(url, {
-                method: "PUT",
-                headers: { "Authorization": `token ${GITHUB_CONFIG.token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(bodyData)
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                fileSha = data.content.sha; 
-                return true;
+            if (error) {
+                console.error("Error bajando datos de Supabase:", error);
             } else {
-                throw new Error("Fallo de escritura en GitHub API");
+                allOrders = data.sort((a, b) => b.id.localeCompare(a.id));
+                renderOrders();
             }
         }
 
@@ -275,59 +232,73 @@
             if(!tareas.length) { document.getElementById('error-no-selection').classList.remove('hidden'); return; }
             document.getElementById('error-no-selection').classList.add('hidden');
 
-            const nuevoPedido = {
-                id: "ID-" + Date.now(),
-                clientName: document.getElementById('client-name').value,
-                datePref: document.getElementById('pref-date').value || "Lo antes posible",
-                services: tareas,
-                total: document.getElementById('live-total').innerText,
-                status: "Pendiente"
-            };
+            document.getElementById('submit-btn').disabled = true;
 
-            allOrders.unshift(nuevoPedido); 
+            const { error } = await supabase
+                .from('pedidos')
+                .insert([{
+                    id: "ID-" + Date.now(),
+                    client_name: document.getElementById('client-name').value,
+                    date_pref: document.getElementById('pref-date').value || "Lo antes posible",
+                    services: tareas,
+                    total: document.getElementById('live-total').innerText,
+                    status: "Pendiente"
+                }]);
 
-            try {
-                document.getElementById('submit-btn').disabled = true;
-                await saveOrdersToGitHub();
-                showToast("🚀 ¡Solicitud enviada y guardada en tu GitHub!");
+            if (!error) {
+                showToast("🚀 ¡Solicitud guardada en Supabase Cloud!");
                 document.getElementById('services-form').reset();
                 initSession(currentRole);
                 updateTotal();
-            } catch (err) {
-                showToast("❌ Error al guardar en GitHub. Verificá los permisos del Token.", "error");
-                allOrders.shift(); 
-            } finally {
-                document.getElementById('submit-btn').disabled = false;
+            } else {
+                showToast("❌ Error al guardar en la base de datos.", "error");
+                console.error(error);
             }
+            document.getElementById('submit-btn').disabled = false;
         };
 
         window.updateStatus = async function(id, nuevoEstado) {
-            allOrders = allOrders.map(p => p.id === id ? { ...p, status: nuevoEstado } : p);
-            try {
-                await saveOrdersToGitHub();
+            const { error } = await supabase
+                .from('pedidos')
+                .update({ status: nuevoEstado })
+                .eq('id', id);
+
+            if (!error) {
                 showToast(`Orden actualizada a: ${nuevoEstado}`);
-                renderOrders();
-            } catch(e) { showToast("Error al guardar el nuevo estado", "error"); }
+                fetchOrders();
+            } else {
+                showToast("Error al guardar estado", "error");
+            }
         };
 
         window.deleteOrder = async function(id) {
-            if (!confirm("¿Querés eliminar esta solicitud del registro permanentemente?")) return;
-            allOrders = allOrders.filter(p => p.id !== id);
-            try {
-                await saveOrdersToGitHub();
+            if (!confirm("¿Querés eliminar esta solicitud permanentemente?")) return;
+            const { error } = await supabase
+                .from('pedidos')
+                .delete()
+                .eq('id', id);
+
+            if (!error) {
                 showToast("Registro removido.");
-                renderOrders();
-            } catch(e) { showToast("Error al eliminar", "error"); }
+                fetchOrders();
+            } else {
+                showToast("Error al eliminar", "error");
+            }
         };
 
         window.clearCompletedHistory = async function() {
-            if (!confirm("¿Eliminar todas las órdenes completadas de la lista?")) return;
-            allOrders = allOrders.filter(p => p.status === "Pendiente");
-            try {
-                await saveOrdersToGitHub();
-                showToast("Historial limpiado con éxito");
-                renderOrders();
-            } catch(e) { showToast("Error al limpiar historial", "error"); }
+            if (!confirm("¿Eliminar todas las órdenes completadas?")) return;
+            const { error } = await supabase
+                .from('pedidos')
+                .delete()
+                .eq('status', 'Completado');
+
+            if (!error) {
+                showToast("Historial de completados limpiado.");
+                fetchOrders();
+            } else {
+                showToast("Error al limpiar historial", "error");
+            }
         };
 
         window.searchOrderStatus = function() {
@@ -335,9 +306,9 @@
             const box = document.getElementById('search-result-box');
             if(!name) { box.classList.add('hidden'); return; }
 
-            const filtrados = allOrders.filter(p => p.clientName.toLowerCase().includes(name));
+            const filtrados = allOrders.filter(p => p.client_name.toLowerCase().includes(name));
             if(!filtrados.length) {
-                box.innerHTML = "<p class='text-xs text-slate-400 italic'>No tenés solicitudes activas registradas.</p>";
+                box.innerHTML = "<p class='text-xs text-slate-400 italic'>No tenés solicitudes activas.</p>";
                 box.className = "mt-4 p-4 rounded-xl border bg-slate-50 text-center";
                 box.classList.remove('hidden');
                 return;
@@ -351,7 +322,7 @@
                 
                 html += `
                 <div class="p-3 bg-slate-50 border rounded-xl flex justify-between items-center text-xs">
-                    <div><strong>${p.services.join(' + ')}</strong><p class="text-slate-400 mt-0.5">Precio total: ${p.total} · Horario: ${p.datePref}</p></div>
+                    <div><strong>${p.services.join(' + ')}</strong><p class="text-slate-400 mt-0.5">Precio: ${p.total} · Horario: ${p.date_pref}</p></div>
                     <span class="px-2 py-0.5 rounded font-black border uppercase text-[10px] ${statusColor}">${p.status}</span>
                 </div>`;
             });
@@ -363,7 +334,7 @@
             const container = document.getElementById('admin-orders-container');
             if(!container) return;
             if(allOrders.length === 0) {
-                container.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-8">No hay solicitudes guardadas en tu repositorio todavía.</p>`;
+                container.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-8">No hay solicitudes guardadas en la base de datos.</p>`;
                 return;
             }
 
@@ -373,12 +344,12 @@
                 html += `
                 <div class="border p-4 rounded-xl space-y-3 transition-all ${cardStyle}">
                     <div class="flex justify-between items-center border-b pb-2">
-                        <div><span class="text-xs text-slate-400">Cliente:</span> <strong>${p.clientName}</strong></div>
+                        <div><span class="text-xs text-slate-400">Cliente:</span> <strong>${p.client_name}</strong></div>
                         <div class="text-xs font-bold text-indigo-600 bg-white border px-2 rounded">${p.total}</div>
                     </div>
                     <div class="text-xs text-slate-600 space-y-0.5">
                         <div>📌 Tareas: <strong class="text-slate-800">${p.services.join(' + ')}</strong></div>
-                        <div>📅 Horario: ${p.datePref}</div>
+                        <div>📅 Horario: ${p.date_pref}</div>
                         <div>⚙️ Estado: <span class="font-black uppercase text-xs">${p.status}</span></div>
                     </div>
                     ${currentRole === 'santi' ? `
